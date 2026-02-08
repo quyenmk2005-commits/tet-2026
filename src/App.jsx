@@ -6,6 +6,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import Fortune from './pages/Fortune';
 import LuckyMoney from './pages/LuckyMoney'; // Trang lắc xì (nếu bạn đã tạo)
+import Numerology from './pages/Numerology';
 
 function App() {
   return (
@@ -19,6 +20,9 @@ function App() {
         
         {/* Khi vào /lac-xi -> hiện LuckyMoney */}
         <Route path="/lac-xi" element={<LuckyMoney />} />
+
+        {/* Khi vào /than-so-hoc -> hiện Numerology */}
+        <Route path="/than-so-hoc" element={<Numerology />} />
       </Routes>
     </Router>
   );
