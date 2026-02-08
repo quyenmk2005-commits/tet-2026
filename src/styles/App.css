@@ -248,3 +248,46 @@ h1.title {
   z-index: 10;
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
 }
+/* --- STYLE CHO 3 Ô CHỌN NGÀY THÁNG --- */
+/* --- STYLE CHO 3 Ô CHỌN NGÀY THÁNG (CẬP NHẬT) --- */
+.date-picker-group {
+  display: flex;
+  gap: 15px; /* Tăng khoảng cách giữa các ô ra 15px */
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px; /* Cách ra so với ô nhập tên phía trên */
+}
+
+.date-select {
+  flex: 1; 
+  padding: 12px;
+  border-radius: 8px;
+  border: none; /* Bỏ viền đen mặc định cho đẹp */
+  background: #fff;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+  outline: none;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Thêm chút bóng đổ cho nổi */
+  transition: all 0.3s;
+}
+
+/* Hiệu ứng khi bấm vào */
+.date-select:focus {
+  border: 2px solid #00d2ff;
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Responsive cho màn hình nhỏ tí */
+@media (max-width: 350px) {
+  .date-picker-group {
+    gap: 5px;
+  }
+  .date-select {
+    padding: 10px 5px;
+    font-size: 14px;
+  }
+}

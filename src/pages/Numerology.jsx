@@ -5,12 +5,23 @@ import '../styles/App.css';
 
 const Numerology = () => {
   const navigate = useNavigate();
-  const [dob, setDob] = useState("");
+  
+  // 1. STATE CHO 3 Ô CHỌN
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
+  
   const [name, setName] = useState("");
-  const [lifePath, setLifePath] = useState(null); // Số chủ đạo
-  const [personalYear, setPersonalYear] = useState(null); // Năm cá nhân
+  const [lifePath, setLifePath] = useState(null);
+  const [personalYear, setPersonalYear] = useState(null);
 
-  // --- DATA Ý NGHĨA SỐ CHỦ ĐẠO ---
+  // Tạo dữ liệu cho Dropdown
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
+
+  // --- DATA Ý NGHĨA (GIỮ NGUYÊN NHƯ CŨ) ---
   const LIFE_PATH_MEANINGS = {
     1: { title: "Số 1 - Người Tiên Phong", desc: "Bạn sinh ra để dẫn đầu. Điểm mạnh là sự độc lập, quyết đoán và sáng tạo. Tuy nhiên cần học cách lắng nghe và bớt cái tôi." },
     2: { title: "Số 2 - Người Hòa Giải", desc: "Bạn có trực giác tuyệt vời, yêu hòa bình và giỏi kết nối. Bạn sống tình cảm nhưng đôi khi quá nhạy cảm và dễ bị tổn thương." },
@@ -26,7 +37,6 @@ const Numerology = () => {
     33: { title: "Số 33 - Người Chữa Lành (Master)", desc: "Con số của lòng từ bi vô lượng. Bạn mang năng lượng chữa lành và hướng dẫn mọi người về mặt tinh thần." }
   };
 
-  // --- DATA Ý NGHĨA NĂM CÁ NHÂN (1 đến 9) ---
   const PERSONAL_YEAR_MEANINGS = {
     1: { title: "Năm số 1: Khởi đầu mới", desc: "Năm gieo hạt. Hãy bắt đầu những dự án mới, thói quen mới. Đây là năm của sự độc lập và quyết đoán. Đừng ngại thay đổi!" },
     2: { title: "Năm số 2: Phát triển mối quan hệ", desc: "Năm chậm lại để lắng nghe. Tập trung vào kết nối, hợp tác và tình cảm. Không nên vội vàng, hãy kiên nhẫn." },
@@ -39,12 +49,10 @@ const Numerology = () => {
     9: { title: "Năm số 9: Kết thúc & Buông bỏ", desc: "Năm dọn dẹp. Hãy loại bỏ những gì cũ kỹ (đồ đạc, mối quan hệ toxic) để chuẩn bị cho chu kỳ mới. Năm của sự cho đi và tha thứ." }
   };
 
-  // --- HÀM TÍNH TỔNG CÁC CHỮ SỐ (Rút gọn) ---
   const sumDigits = (num) => {
     let sum = 0;
     while (num > 0 || sum > 9) {
       if (num === 0) {
-        // Giữ số Master 11, 22, 33 (Chỉ áp dụng cho Số chủ đạo, Năm cá nhân thì thường rút gọn hết về 1-9)
         if (sum === 11 || sum === 22 || sum === 33) return sum;
         num = sum;
         sum = 0;
@@ -55,71 +63,80 @@ const Numerology = () => {
     return sum;
   };
 
-  // --- HÀM XỬ LÝ CHÍNH ---
   const handleCalculate = () => {
-    if (!dob) { alert("Vui lòng nhập ngày sinh!"); return; }
+    // 2. VALIDATE INPUT
+    if (!day || !month || !year) { 
+      alert("Vui lòng chọn đầy đủ ngày tháng năm sinh!"); 
+      return; 
+    }
 
-    const dateObj = new Date(dob);
-    const day = dateObj.getDate();
-    const month = dateObj.getMonth() + 1;
-    const year = dateObj.getFullYear();
-    const currentYear = new Date().getFullYear(); // Lấy năm hiện tại (2026)
+    // Convert string sang số để tính
+    const dVal = parseInt(day);
+    const mVal = parseInt(month);
+    const yVal = parseInt(year);
+    const curYear = new Date().getFullYear();
 
-    // 1. TÍNH SỐ CHỦ ĐẠO (Life Path)
-    // Cách tính: Rút gọn Ngày, Tháng, Năm riêng rồi cộng lại
-    const d = sumDigits(day);
-    const m = sumDigits(month);
-    const y = sumDigits(year);
+    // A. TÍNH SỐ CHỦ ĐẠO
+    const d = sumDigits(dVal);
+    const m = sumDigits(mVal);
+    const y = sumDigits(yVal);
     let lp = sumDigits(d + m + y);
     setLifePath(LIFE_PATH_MEANINGS[lp] || LIFE_PATH_MEANINGS[1]);
 
-    // 2. TÍNH NĂM CÁ NHÂN (Personal Year)
-    // Công thức: Ngày sinh + Tháng sinh + Năm hiện tại (Thế giới)
-    // Lưu ý: Năm cá nhân luôn rút gọn về 1-9 (Hiếm khi giữ 11/22/33)
-    let pySum = d + m + sumDigits(currentYear);
-    
-    // Rút gọn pySum về 1 chữ số (1-9)
+    // B. TÍNH NĂM CÁ NHÂN
+    let pySum = d + m + sumDigits(curYear);
     while (pySum > 9) {
       let temp = 0;
       let n = pySum;
       while (n > 0) { temp += n % 10; n = Math.floor(n / 10); }
       pySum = temp;
     }
-    
     setPersonalYear(PERSONAL_YEAR_MEANINGS[pySum]);
   };
 
-  return (
-    <div className="container numerology-bg">
-      <button onClick={() => navigate('/')} className="btn-back">⬅ Menu</button>
+return (
+  <div className="container numerology-bg">
+    <button onClick={() => navigate('/')} className="btn-back">⬅ Menu</button>
 
-      <h1 className="title neon-text">Thần Số Học 2026</h1>
-      <p className="subtitle">Khám phá bản đồ cuộc đời bạn</p>
+    <h1 className="title neon-text">Thần Số Học</h1>
+    <p className="subtitle">Khám phá bản đồ cuộc đời bạn</p>
 
-      <div className="input-group">
-        <input 
-          type="text" 
-          placeholder="Tên của bạn..." 
-          className="input-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input 
-          type="date" 
-          className="input-name"
-          value={dob}
-          onChange={(e) => setDob(e.target.value)}
-          style={{ fontFamily: 'sans-serif' }}
-        />
-        <button onClick={handleCalculate} className="btn-submit">
-          🔮 Xem Chi Tiết
-        </button>
+    <div className="input-group">
+      {/* Ô NHẬP TÊN */}
+      <input 
+        type="text" 
+        placeholder="Tên của bạn..." 
+        className="input-name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        // Thêm margin-bottom ở style hoặc class input-name
+        style={{ marginBottom: '10px' }} 
+      />
+      
+      {/* 3 Ô CHỌN NGÀY THÁNG (Đã có class date-picker-group xử lý khoảng cách) */}
+      <div className="date-picker-group">
+        <select value={day} onChange={e => setDay(e.target.value)} className="date-select">
+          <option value="">Ngày</option>
+          {days.map(d => <option key={d} value={d}>{d}</option>)}
+        </select>
+
+        <select value={month} onChange={e => setMonth(e.target.value)} className="date-select">
+          <option value="">Tháng</option>
+          {months.map(m => <option key={m} value={m}>{m}</option>)}
+        </select>
+
+        <select value={year} onChange={e => setYear(e.target.value)} className="date-select">
+          <option value="">Năm</option>
+          {years.map(y => <option key={y} value={y}>{y}</option>)}
+        </select>
       </div>
 
-      {/* KHU VỰC HIỂN THỊ KẾT QUẢ (Chia 2 cột nếu màn hình to) */}
+      <button onClick={handleCalculate} className="btn-submit" style={{marginTop: '25px'}}>
+        🔮 Xem Chi Tiết
+      </button>
+    </div>
+
       <div className="result-container">
-        
-        {/* KẾT QUẢ SỐ CHỦ ĐẠO */}
         {lifePath && (
           <div className="result-card card-lifepath">
             <div className="card-header">SỐ CHỦ ĐẠO</div>
@@ -129,7 +146,6 @@ const Numerology = () => {
           </div>
         )}
 
-        {/* KẾT QUẢ NĂM CÁ NHÂN */}
         {personalYear && (
           <div className="result-card card-personal">
             <div className="card-header">NĂM CÁ NHÂN {new Date().getFullYear()}</div>
@@ -138,16 +154,15 @@ const Numerology = () => {
             <p>{personalYear.desc}</p>
           </div>
         )}
-
       </div>
 
-      {/* CSS INLINE CHO GỌN */}
       <style>{`
         .numerology-bg {
           background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
           min-height: 100vh;
           color: white;
           padding-bottom: 50px;
+          display: flex; flex-direction: column; align-items: center;
         }
         .neon-text { text-shadow: 0 0 10px #00d2ff, 0 0 20px #00d2ff; color: #fff; }
         .subtitle { color: #ccc; margin-bottom: 20px; font-style: italic; }
@@ -155,22 +170,24 @@ const Numerology = () => {
         .btn-back {
           position: absolute; top: 20px; left: 20px;
           background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.5);
-          color: #fff; padding: 8px 15px; border-radius: 20px; cursor: pointer;
+          color: #fff; padding: 8px 15px; border-radius: 20px; cursor: pointer; z-index: 10;
         }
         .btn-submit {
-          margin-top: 15px; background: #00d2ff; color: #000; width: 100%; 
+          background: #00d2ff; color: #000; width: 100%; 
           font-weight: bold; border: none; padding: 12px; border-radius: 8px; cursor: pointer;
           box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+          margin-top: 10px;
         }
         
         .result-container {
           display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
-          width: 100%; margin-top: 30px;
+          width: 100%; margin-top: 30px; padding: 0 20px;
         }
         .result-card {
           background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
           padding: 20px; border-radius: 15px; width: 100%; max-width: 350px;
           border: 1px solid rgba(255,255,255,0.2); animation: slideUp 0.5s ease;
+          box-sizing: border-box;
         }
         .card-lifepath { border-top: 4px solid #00d2ff; }
         .card-personal { border-top: 4px solid #ff00de; }

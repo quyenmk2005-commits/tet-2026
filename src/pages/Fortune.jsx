@@ -1,7 +1,6 @@
 // src/pages/Fortune.jsx
-import { useState, useEffect, useRef } from 'react'; // <-- Import thêm useRef, useEffect
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import '../styles/App.css'; 
 import { POEMS } from '../data/poems'; 
 import ShakeJar from '../components/ShakeJar'; 
@@ -11,22 +10,20 @@ import shakeSoundFile from '../assets/sounds/shake.mp3';
 function Fortune() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [dob, setDob] = useState("");
+  
+  // 1. THAY DATEPICKER BẰNG 3 STATE RIÊNG
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
+
   const [isShaking, setIsShaking] = useState(false);
   const [result, setResult] = useState(null);
 
-  // 1. Tạo ref nhạc
-  const audioRef = useRef(null);
-
-  // 2. Tự động tắt nhạc khi rời trang
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
-    };
-  }, []);
+  // Tạo dữ liệu cho Dropdown
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
 
   const sanitizeName = (str) => {
     if (!str) return "";
@@ -38,10 +35,17 @@ function Fortune() {
     return words.length > 0 ? words[words.length - 1] : ""; 
   };
 
-  const getFixedFortune = (userName, userDob) => {
+  const getFixedFortune = (userName, d, m, y) => {
     const cleanName = sanitizeName(userName);
-    const currentYear = new Date().getFullYear();
-    const seedString = `${cleanName}-${userDob}-${currentYear}`;
+    const curYear = new Date().getFullYear();
+    
+    // 2. TẠO CHUỖI NGÀY SINH CHUẨN (Thêm số 0 vào trước nếu < 10)
+    // Ví dụ: ngày 1 -> "01", tháng 2 -> "02"
+    const dd = String(d).padStart(2, '0');
+    const mm = String(m).padStart(2, '0');
+    const userDob = `${y}-${mm}-${dd}`;
+
+    const seedString = `${cleanName}-${userDob}-${curYear}`;
     
     let hash = 0;
     for (let i = 0; i < seedString.length; i++) {
@@ -57,31 +61,23 @@ function Fortune() {
       alert("Thí chủ vui lòng xưng danh!");
       return;
     }
-    if (!dob) {
-      alert("Thí chủ vui lòng cho biết ngày sinh!");
+    // 3. CHECK XEM ĐÃ CHỌN ĐỦ 3 Ô CHƯA
+    if (!day || !month || !year) {
+      alert("Thí chủ vui lòng chọn đầy đủ ngày tháng năm sinh!");
       return;
     }
 
     if (isShaking) return; 
 
-    // --- SỬA LOGIC NHẠC ---
-    if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-    }
     const audio = new Audio(shakeSoundFile);
     audio.volume = 0.5; 
-    audioRef.current = audio; // Lưu vào ref
-    audio.play().catch((err) => {
-      console.log("Lỗi nhạc:", err);
-    });
-    // ----------------------
+    audio.play().catch((err) => {});
 
     setIsShaking(true);
     
     setTimeout(() => {
       setIsShaking(false);
-      const index = getFixedFortune(name, dob);
+      const index = getFixedFortune(name, day, month, year);
       setResult(POEMS[index]);
     }, 1500); 
   };
@@ -117,16 +113,24 @@ function Fortune() {
           />
         </div>
         
-        <div>
-          <input 
-            type="date" 
-            className="input-name"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-            disabled={isShaking || result}
-            style={{ fontFamily: 'sans-serif', color: '#333' }}
-          />
+        {/* 4. GIAO DIỆN 3 Ô CHỌN (DROPDOWN) */}
+        <div className="date-picker-group">
+          <select value={day} onChange={e => setDay(e.target.value)} className="date-select" disabled={isShaking}>
+            <option value="">Ngày</option>
+            {days.map(d => <option key={d} value={d}>{d}</option>)}
+          </select>
+
+          <select value={month} onChange={e => setMonth(e.target.value)} className="date-select" disabled={isShaking}>
+            <option value="">Tháng</option>
+            {months.map(m => <option key={m} value={m}>{m}</option>)}
+          </select>
+
+          <select value={year} onChange={e => setYear(e.target.value)} className="date-select" disabled={isShaking}>
+            <option value="">Năm</option>
+            {years.map(y => <option key={y} value={y}>{y}</option>)}
+          </select>
         </div>
+
         <p style={{fontSize: '12px', color: '#eee', marginTop: '8px', fontStyle: 'italic', opacity: 0.8}}>
           *Vui lòng nhập đúng Tên và Ngày sinh.
         </p>
