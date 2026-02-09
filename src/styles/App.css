@@ -1,7 +1,7 @@
 /* src/styles/App.css */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap');
 
-/* --- LAYOUT CHUNG --- */
+/* --- 1. LAYOUT CHUNG & ANIMATION TRANG --- */
 body {
   margin: 0;
   background: radial-gradient(circle, #8E0E00 0%, #1F1C18 100%);
@@ -9,6 +9,12 @@ body {
   color: white;
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+/* Hiệu ứng hiện trang mượt mà */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .container {
@@ -19,6 +25,9 @@ body {
   min-height: 100vh;
   padding: 20px;
   text-align: center;
+  animation: fadeIn 0.8s ease-out; /* Áp dụng fade in */
+  position: relative;
+  z-index: 10; /* Nổi lên trên lớp hoa rơi */
 }
 
 h1.title {
@@ -30,9 +39,11 @@ h1.title {
   text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
-/* --- INPUT --- */
+/* --- 2. INPUT & FORM --- */
 .input-group {
   margin-bottom: 40px;
+  width: 100%;
+  max-width: 350px; /* Giới hạn chiều rộng cho đẹp */
 }
 
 .input-name {
@@ -41,14 +52,96 @@ h1.title {
   border-radius: 30px;
   border: 2px solid #FFD700;
   background: rgba(255, 255, 255, 0.9);
-  width: 250px;
+  width: 100%; /* Full width của input-group */
+  box-sizing: border-box;
   text-align: center;
   font-weight: bold;
   outline: none;
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  margin-bottom: 15px; /* Khoảng cách với ô ngày tháng */
 }
 
-/* --- HŨ XĂM --- */
+/* --- 3. STYLE CHO 3 Ô CHỌN NGÀY THÁNG (FINAL) --- */
+.date-picker-group {
+  display: flex;
+  gap: 15px; /* Khoảng cách rộng rãi 15px */
+  justify-content: center;
+  width: 100%;
+}
+
+.date-select {
+  flex: 1; 
+  padding: 12px;
+  border-radius: 8px;
+  border: none; 
+  background: #fff;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+  outline: none;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+  appearance: none; /* Bỏ mũi tên mặc định trên một số trình duyệt */
+}
+
+/* Hiệu ứng focus */
+.date-select:focus {
+  border: 2px solid #00d2ff;
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Responsive cho màn hình bé */
+@media (max-width: 350px) {
+  .date-picker-group { gap: 5px; }
+  .date-select { padding: 10px 5px; font-size: 14px; }
+}
+
+/* --- 4. BUTTONS & HIỆU ỨNG THỞ --- */
+.btn-group {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* Animation nút thở (phát sáng) */
+@keyframes pulse-gold {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+  70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+
+.btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Nút download */
+.btn-download { background: #2E7D32; color: white; }
+
+/* Nút đóng/cancel */
+.btn-close { background: #D32F2F; color: white; }
+
+/* Nút submit/chơi game (Thêm class này cho các nút chính) */
+.btn-submit, .btn:not(.btn-download):not(.btn-close) {
+  animation: pulse-gold 2s infinite; /* Áp dụng hiệu ứng thở */
+}
+
+.btn:hover { 
+  transform: translateY(-3px); 
+  filter: brightness(1.2); 
+  animation: none; /* Dừng thở khi hover để tránh giật */
+}
+
+/* --- 5. GIEO QUẺ (HŨ XĂM & KẾT QUẢ) --- */
 .jar-container {
   cursor: pointer;
   transition: transform 0.2s;
@@ -61,13 +154,6 @@ h1.title {
   filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
 }
 
-.guide-text {
-  margin-top: 15px;
-  color: #ccc;
-  font-size: 0.9rem;
-}
-
-/* --- ANIMATION LẮC --- */
 .shake-anim {
   animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite;
 }
@@ -79,7 +165,7 @@ h1.title {
   40%, 60% { transform: translate3d(4px, 0, 0) rotate(4deg); }
 }
 
-/* --- KẾT QUẢ (MODAL) --- */
+/* Modal Kết Quả */
 .result-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -89,10 +175,11 @@ h1.title {
   justify-content: center;
   z-index: 100;
   padding: 20px;
+  animation: fadeIn 0.3s ease-in;
 }
 
 .card-wrapper {
-  background: #FFFBE7; /* Màu giấy cũ */
+  background: #FFFBE7;
   color: #8E0E00;
   width: 100%;
   max-width: 340px;
@@ -109,12 +196,6 @@ h1.title {
   margin-bottom: 20px;
   font-family: 'Playfair Display', serif;
   font-size: 1.4rem;
-  font-weight: bold;
-}
-
-.user-label {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
   font-weight: bold;
 }
 
@@ -141,38 +222,10 @@ h1.title {
   border-radius: 8px;
 }
 
-.card-footer {
-  margin-top: 25px;
-  font-size: 0.75rem;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* --- BUTTONS --- */
-.btn-group {
-  margin-top: 20px;
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-.btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 1rem;
-  transition: all 0.2s;
-}
-
-.btn-download { background: #2E7D32; color: white; }
-.btn-close { background: #D32F2F; color: white; }
-.btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+/* --- 6. LÌ XÌ (LUCKY MONEY) --- */
 .lucky-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 cột */
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   width: 100%;
   max-width: 400px;
@@ -180,7 +233,6 @@ h1.title {
   padding: 10px;
 }
 
-/* Từng cái bao lì xì */
 .lucky-item {
   position: relative;
   cursor: pointer;
@@ -191,7 +243,7 @@ h1.title {
   align-items: center;
 }
 
-/* Hiệu ứng sợi dây treo (Dùng CSS vẽ) */
+/* Dây treo */
 .lucky-item::before {
   content: "";
   position: absolute;
@@ -199,11 +251,10 @@ h1.title {
   left: 50%;
   width: 2px;
   height: 20px;
-  background-color: #FFD700; /* Dây vàng */
+  background-color: #FFD700;
   z-index: 1;
 }
 
-/* Ảnh bao lì xì */
 .envelope-img {
   width: 100px;
   filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
@@ -211,23 +262,19 @@ h1.title {
   z-index: 2;
 }
 
-/* Khi hover vào (trên PC) */
 .lucky-item:hover .envelope-img {
   transform: rotate(5deg) scale(1.05);
 }
 
-/* Khi đã mở */
 .lucky-item.opened .envelope-img {
-  opacity: 0; /* Ẩn bao đi để hiện ruột */
+  opacity: 0;
   transform: scale(0);
 }
 
-/* Kết quả bên trong (hiện ra khi mở) */
 .prize-content {
   position: absolute;
   top: 40px;
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   color: #FFD700;
   font-weight: bold;
   font-size: 1.1rem;
@@ -241,53 +288,89 @@ h1.title {
   z-index: 1;
 }
 
-/* Class kích hoạt hiện kết quả */
 .lucky-item.opened .prize-content {
   opacity: 1;
   transform: scale(1);
   z-index: 10;
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
 }
-/* --- STYLE CHO 3 Ô CHỌN NGÀY THÁNG --- */
-/* --- STYLE CHO 3 Ô CHỌN NGÀY THÁNG (CẬP NHẬT) --- */
-.date-picker-group {
-  display: flex;
-  gap: 15px; /* Tăng khoảng cách giữa các ô ra 15px */
-  justify-content: center;
+
+/* --- 7. HIỆU ỨNG HOA RƠI (FALLING FLOWERS) --- */
+.flower-container {
+  position: fixed;
+  top: 0; left: 0;
   width: 100%;
-  margin-top: 15px; /* Cách ra so với ô nhập tên phía trên */
+  height: 100%;
+  pointer-events: none; /* Để chuột vẫn bấm được nút bên dưới */
+  z-index: 5; /* Thấp hơn nội dung chính (z-index 10) */
+  overflow: hidden;
 }
 
-.date-select {
-  flex: 1; 
-  padding: 12px;
-  border-radius: 8px;
-  border: none; /* Bỏ viền đen mặc định cho đẹp */
-  background: #fff;
-  color: #333;
-  font-size: 16px;
-  font-weight: bold;
-  outline: none;
-  cursor: pointer;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Thêm chút bóng đổ cho nổi */
-  transition: all 0.3s;
+.flower {
+  position: absolute;
+  top: -50px;
+  font-size: 25px;
+  animation: fall linear infinite;
 }
 
-/* Hiệu ứng khi bấm vào */
-.date-select:focus {
-  border: 2px solid #00d2ff;
-  box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
-  transform: translateY(-2px);
+@keyframes fall {
+  0% { transform: translateY(-50px) rotate(0deg) translateX(0px); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(360deg) translateX(50px); opacity: 0; }
 }
 
-/* Responsive cho màn hình nhỏ tí */
-@media (max-width: 350px) {
-  .date-picker-group {
-    gap: 5px;
-  }
-  .date-select {
-    padding: 10px 5px;
-    font-size: 14px;
-  }
+/* --- HIỆU ỨNG LỒNG ĐÈN ĐUNG ĐƯA --- */
+
+.tet-decor-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 20;
 }
+
+.lantern-box {
+  position: absolute;
+  top: -20px; /* Giấu phần gốc dây lên trên */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: top center; /* Điểm neo để lắc */
+  animation: lantern-sway 3s ease-in-out infinite alternate;
+}
+
+/* Vẽ sợi dây treo */
+.string {
+  width: 2px;
+  background: #FFD700; /* Màu dây vàng */
+  height: 60px; /* Độ dài mặc định */
+}
+
+.lantern {
+  font-size: 3rem; /* Kích thước lồng đèn */
+  margin-top: -10px;
+  filter: drop-shadow(0 10px 10px rgba(255, 0, 0, 0.5)); /* Hiệu ứng phát sáng */
+}
+
+/* Vị trí và độ dài từng cái */
+.left-1 { left: 5%; animation-delay: 0s; }
+.left-1 .string { height: 80px; }
+
+.left-2 { left: 15%; animation-delay: 1.5s; transform: scale(0.8); } /* Nhỏ hơn chút */
+.left-2 .string { height: 50px; }
+
+.right-1 { right: 5%; animation-delay: 0.5s; }
+.right-1 .string { height: 90px; }
+
+.right-2 { right: 15%; animation-delay: 2s; transform: scale(0.8); }
+.right-2 .string { height: 60px; }
+
+/* Animation lắc lư */
+@keyframes lantern-sway {
+  0% { transform: rotate(-5deg); }
+  100% { transform: rotate(5deg); }
+}
+
+/* --- (GIỮ NGUYÊN HIỆU ỨNG HOA RƠI Ở CÁC BƯỚC TRƯỚC) --- */
