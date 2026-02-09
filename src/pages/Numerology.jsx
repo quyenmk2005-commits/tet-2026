@@ -96,7 +96,48 @@ const Numerology = () => {
 
 return (
   <div className="container numerology-bg">
-    <button onClick={() => navigate('/')} className="btn-back">⬅ Menu</button>
+    <button onClick={() => navigate('/')} 
+    style={{
+    position: 'absolute', 
+    top: '20px', 
+    left: '20px',
+    
+    // Flexbox để icon và chữ thẳng hàng
+    display: 'flex', 
+    alignItems: 'center', 
+    gap: '8px', // Khoảng cách giữa Icon và Chữ
+    
+    // Style giao diện (Hình viên thuốc)
+    padding: '8px 16px',
+    background: 'rgba(255, 255, 255, 0.15)', // Nền trong suốt nhẹ
+    backdropFilter: 'blur(5px)', // Làm mờ nền phía sau (hiệu ứng kính)
+    border: '1px solid rgba(255, 255, 255, 0.5)', 
+    borderRadius: '30px', // Bo tròn mạnh để thành hình viên thuốc
+    
+    // Style chữ
+    color: '#fff', 
+    fontSize: '0.9rem',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    zIndex: 10,
+    transition: 'all 0.3s ease'
+  }}
+  // Thêm hiệu ứng hover đơn giản
+  onMouseEnter={(e) => {
+    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+    e.currentTarget.style.transform = 'translateY(-2px)';
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+    e.currentTarget.style.transform = 'translateY(0)';
+  }}
+>
+  {/* Icon ngôi nhà */}
+  <i className="fi fi-ss-home" style={{fontSize: '1.1rem'}}></i>
+  
+  {/* Chữ Trang chủ */}
+  <span>Trang chủ</span>
+</button>
 
     <h1 className="title neon-text">Thần Số Học</h1>
     <p className="subtitle">Khám phá bản đồ cuộc đời bạn</p>

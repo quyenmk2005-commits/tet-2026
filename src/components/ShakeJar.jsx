@@ -2,7 +2,7 @@
 import React from 'react';
 // Nếu bạn chưa có ảnh thật, dùng tạm link online này, sau này thay bằng: 
 // import jarImg from '../assets/images/jar.png'; 
-const jarImg = "https://img.icons8.com/color/240/year-of-snake.png"; 
+const jarImg = "https://img.icons8.com/?size=100&id=UFho1x7DLRPa&format=png&color=000000"; 
 
 const ShakeJar = ({ isShaking, onShake, disabled }) => {
   return (

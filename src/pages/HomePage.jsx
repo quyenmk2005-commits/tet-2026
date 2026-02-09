@@ -42,7 +42,7 @@ const HomePage = () => {
             fontWeight: 'bold',
             fontFamily: "'Playfair Display', serif" // Thêm font cho sang trọng
           }}>
-            Tết Ất Tỵ 2025
+            Tết 2026
           </h1>
           
           <p style={{
