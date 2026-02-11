@@ -3,6 +3,8 @@ import React from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
 import FallingFlowers from './components/FallingFlowers';
+import BackgroundMusic from './components/BackgroundMusic';
+
 // Import các trang (Pages)
 import HomePage from './pages/HomePage';
 import Fortune from './pages/Fortune';
@@ -12,6 +14,11 @@ import Numerology from './pages/Numerology';
 function App() {
   return (
     <Router>
+      <BackgroundMusic />
+
+      
+      
+
       <FallingFlowers />
 
       <Routes>

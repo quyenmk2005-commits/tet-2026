@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/App.css';
 import TetDecor from '../components/TetDecor'; // 1. Import Component trang trí
 import FallingFlowers from '../components/FallingFlowers';
+import TetCountdown from '../components/TetCountdown';
+
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ const HomePage = () => {
       
       {/* 3. Đặt hiệu ứng trang trí ở đây */}
       <FallingFlowers />
+     
       <TetDecor />
 
       {/* 4. Bọc toàn bộ nội dung trong div này để nổi lên trên cành hoa */}
@@ -44,7 +47,7 @@ const HomePage = () => {
           }}>
             Tết 2026
           </h1>
-          
+          <TetCountdown />
           <p style={{
             color: 'white',
             fontSize: '1.1rem',
@@ -223,7 +226,7 @@ const HomePage = () => {
           fontSize: '0.9rem',
           opacity: 0.8
         }}>
-          Made with ❤️ for Tết 2026
+          Made with leducquyenducle :3
         </div>
 
       </div> {/* Kết thúc thẻ div bọc nội dung */}
